@@ -29,10 +29,6 @@ async function fetchBooks() {
      <h3>${book.title}</h3>
      <p class="book-author">by ${book.authors}</p>
      <div class="book-meta">
-       <span>${book.published}</span>
-       <span>${book.pages} pages</span>
-       <span>${book.isbn10}</span>
-       <span>${book.isbn13} pages</span>
      </div>
    </div>
  `;
@@ -52,11 +48,15 @@ function openModal(book) {
   document.getElementById("modalImage").src = book.thumbnail;
   document.getElementById("modalTitle").textContent = book.title;
   document.getElementById("modalAuthors").textContent = `by ${book.authors}`;
-  document.getElementById("modalPublished").textContent = book.published;
-  document.getElementById("modalPages").textContent = `${book.pages} pages`;
+  document.getElementById("modalPublished").textContent = book.published_year;
+  document.getElementById("modalPages").textContent = `${book.num_pages} pages`;
   document.getElementById("modalCategories").textContent = book.categories;
   document.getElementById("modalRating").textContent =
-    book.rating || "Not rated";
+    book.ratings_count || "Not rated";
+  document.getElementById("modalAvgRating").textContent =
+    book.average_rating || "Not rated";
+  document.getElementById("isbn10").textContent = book.isbn10 || "Not avaiable";
+  document.getElementById("isbn13").textContent = book.isbn13 || "Not avaiable";
   document.getElementById("modalDescription").textContent = book.description;
   document.getElementById("bookModal").style.display = "flex";
 
