@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Books Collection</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/books.css') }}"
+    />
+  </head>
+  <body>
+    <nav>
+      <h1>Library</h1>
+      <a href="/" class="btn btn-secondary">Home</a>
+      <a href="/profile" class="btn btn-secondary">Profile</a>
+    </nav>
+    <div id="loadingSpinner" class="spinner" style="display: none">
+      <div class="double-bounce1"></div>
+      <div class="double-bounce2"></div>
+    </div>
+    <div class="search-bar">
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search books by title or author..."
+      />
+      <select class="category-select">
+        <option value="">All Categories</option>
+      </select>
+    </div>
+
+    <div class="book-grid" id="booksGrid"></div>
+
+    <div id="bookModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-image">
+          <img id="modalImage" src="" alt="Book cover" />
+        </div>
+        <div class="modal-details">
+          <button class="modal-close" onclick="closeModal('bookModal')">
+            &times;
+          </button>
+          <div class="modal-header">
+            <h2 id="modalTitle"></h2>
+            <p class="modal-subtitle" id="modalAuthors"></p>
+          </div>
+          <div class="meta-info">
+            <div class="meta-item">
+              <span class="meta-label">Published</span>
+              <span id="modalPublished" class="meta-value"></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Pages</span>
+              <span id="modalPages" class="meta-value"></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Categories</span>
+              <span id="modalCategories" class="meta-value"></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Rating</span>
+              <span id="modalRating" class="meta-value"></span>
+            </div>
+          </div>
+          <p id="modalDescription"></p>
+          <div class="modal-footer">
+            <button class="btn btn-primary" id="borrowButton">Borrow</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="confirmModal" class="confirm-modal">
+      <div class="confirm-modal-content">
+        <div class="confirm-modal-header">
+          <h2>Confirm Borrowing</h2>
+          <button
+            class="confirm-modal-close"
+            onclick="closeModal('confirmModal')"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="confirm-modal-body">
+          <div class="meta-info">
+            <div class="meta-item">
+              <span class="meta-label">Book Title</span>
+              <span id="confirmBookTitle" class="meta-value"></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Book ID</span>
+              <span id="confirmBookId" class="meta-value"></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">User ID</span>
+              <span id="confirmUserId" class="meta-value"></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">User Name</span>
+              <span id="confirmUserName" class="meta-value"></span>
+            </div>
+          </div>
+        </div>
+        <div class="confirm-modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('confirmModal')"
+          >
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="confirmBorrowButton">
+            Confirm Borrow
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/books.js') }}"></script>
+  </body>
+</html>

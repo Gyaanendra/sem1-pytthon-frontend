@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Borrowing System</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/profile.css') }}"
+    />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav>
+      <a href="/">Home</a>
+      <a href="/books">Books</a>
+      <button id="logoutButton" style="display: none" onclick="logout()">
+        Logout
+      </button>
+    </nav>
+    <div class="container">
+      <!-- Signup Form -->
+      <div id="signupForm" class="form-container active">
+        <h2>Sign Up</h2>
+        <input type="text" id="signupFirstName" placeholder="First Name" />
+        <input type="text" id="signupLastName" placeholder="Last Name" />
+        <input type="email" id="signupEmail" placeholder="Email" />
+        <input type="password" id="signupPassword" placeholder="Password" />
+        <button onclick="signUp()">Sign Up</button>
+        <div class="toggle-button" onclick="toggleForm('login')">
+          Already have an account? Login
+        </div>
+      </div>
+
+      <!-- Login Form -->
+      <div id="loginForm" class="form-container">
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email" />
+        <input type="password" id="loginPassword" placeholder="Password" />
+        <button onclick="login()">Login</button>
+        <div class="toggle-button" onclick="toggleForm('signup')">
+          Don't have an account? Sign Up
+        </div>
+      </div>
+      <div class="loader"></div>
+
+      <!-- User Details Section -->
+      <div id="userDetails" class="user-details" style="display: none">
+        <div class="userd">
+          <h3>User Details</h3>
+          <p id="userName"></p>
+          <p id="userEmail"></p>
+          <p id="userid"></p>
+        </div>
+        <div class="bdk">
+          <p>Borrowed Books</p>
+          <div id="borrowedBooksSection" class="borrowed-books">
+            <!-- Book Cards will be dynamically inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+  </body>
+</html>
