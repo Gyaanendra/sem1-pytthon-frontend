@@ -31,6 +31,8 @@ async function fetchBooks() {
      <div class="book-meta">
        <span>${book.published}</span>
        <span>${book.pages} pages</span>
+       <span>${book.isbn10}</span>
+       <span>${book.isbn13} pages</span>
      </div>
    </div>
  `;
