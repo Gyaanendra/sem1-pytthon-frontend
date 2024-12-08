@@ -1,3 +1,6 @@
+const axiosScript = document.createElement("script");
+axiosScript.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
+document.head.appendChild(axiosScript);
 function getCurrentUser() {
   const userData = localStorage.getItem("user");
   if (userData) {
@@ -5,38 +8,41 @@ function getCurrentUser() {
   }
   return null;
 }
+
 function closeModal(modalId) {
   document.getElementById(modalId).style.display = "none";
 }
+
 async function fetchBooks() {
   const booksGrid = document.getElementById("booksGrid");
   const loadingSpinner = document.getElementById("loadingSpinner");
   loadingSpinner.style.display = "block"; // Show the loading animation
 
   try {
-    const response = await fetch(
+    const response = await axios.get(
       "https://sem1-project-api.onrender.com/api/books"
     );
-    const books = await response.json();
+    const books = response.data;
 
     booksGrid.innerHTML = ""; // Clear existing books
     books.forEach((book) => {
       const bookCard = document.createElement("div");
       bookCard.classList.add("book-card");
       bookCard.innerHTML = `
-   <img src="${book.thumbnail}" alt="${book.title}">
-   <div class="book-info">
-     <h3>${book.title}</h3>
-     <p class="book-author">by ${book.authors}</p>
-     <div class="book-meta">
-     </div>
-   </div>
- `;
+        <img src="${book.thumbnail}" alt="${book.title}">
+        <div class="book-info">
+          <h3>${book.title}</h3>
+          <p class="book-author">by ${book.authors}</p>
+          <div class="book-meta">
+          </div>
+        </div>
+      `;
       bookCard.addEventListener("click", () => openModal(book));
       booksGrid.appendChild(bookCard);
     });
   } catch (error) {
     console.error("Failed to load books:", error);
+    alert("Failed to fetch books. Please try again later.");
   } finally {
     loadingSpinner.style.display = "none"; // Hide the loading animation
   }
@@ -55,8 +61,10 @@ function openModal(book) {
     book.ratings_count || "Not rated";
   document.getElementById("modalAvgRating").textContent =
     book.average_rating || "Not rated";
-  document.getElementById("isbn10").textContent = book.isbn10 || "Not avaiable";
-  document.getElementById("isbn13").textContent = book.isbn13 || "Not avaiable";
+  document.getElementById("isbn10").textContent =
+    book.isbn10 || "Not available";
+  document.getElementById("isbn13").textContent =
+    book.isbn13 || "Not available";
   document.getElementById("modalDescription").textContent = book.description;
   document.getElementById("bookModal").style.display = "flex";
 
@@ -87,19 +95,19 @@ function openConfirmModal(book) {
 
 async function borrowBook(bookId, userId) {
   try {
-    const response = await fetch(
+    const response = await axios.post(
       "https://sem1-project-api.onrender.com/api/borrow",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ book_id: bookId, user_id: userId }),
-      }
+      { book_id: bookId, user_id: userId }
     );
-    const data = await response.json();
+    const data = response.data;
     alert(data.error || "Book borrowed successfully!");
     window.location.href = "/profile"; // Redirect to profile to see borrowed books
   } catch (error) {
-    alert("An error occurred while borrowing the book.");
+    console.error("Borrow book error:", error);
+    alert(
+      error.response?.data?.error ||
+        "An error occurred while borrowing the book."
+    );
   }
   closeModal("confirmModal");
 }
@@ -130,6 +138,7 @@ function addLogoutButton() {
     nav.appendChild(logoutBtn);
   }
 }
+
 // Add search filter functionality
 document.querySelector(".search-input").addEventListener("keyup", function () {
   const searchTerm = this.value.toLowerCase(); // Get the search term
