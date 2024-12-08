@@ -1,7 +1,6 @@
 // API Base URL
 const API_BASE_URL = "https://sem1-project-api.onrender.com/api";
 
-// Add axios script
 const axiosScript = document.createElement("script");
 axiosScript.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
 document.head.appendChild(axiosScript);
