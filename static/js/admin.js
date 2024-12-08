@@ -1,4 +1,4 @@
-// API Base URL
+// API Base URLsd
 const API_BASE_URL = "https://sem1-project-api.onrender.com/api";
 
 // DOM Elements
