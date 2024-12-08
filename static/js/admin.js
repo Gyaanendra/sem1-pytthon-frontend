@@ -1,10 +1,6 @@
 // API Base URL
 const API_BASE_URL = "https://sem1-project-api.onrender.com/api";
 
-const axiosScript = document.createElement("script");
-axiosScript.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-document.head.appendChild(axiosScript);
-
 // DOM Elements
 const loginForm = document.getElementById("loginForm");
 const errorMessage = document.getElementById("errorMessage");
@@ -40,15 +36,25 @@ loginForm.addEventListener("submit", async (e) => {
   loadingIndicator.style.display = "block";
 
   try {
-    const response = await axios.post(`${API_BASE_URL}/admin/login`, {
-      email,
-      password,
+    const response = await fetch(`${API_BASE_URL}/admin/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
     });
 
-    localStorage.setItem("adminData", JSON.stringify(response.data));
-    showDashboard();
+    const data = await response.json();
+
+    if (response.ok) {
+      localStorage.setItem("adminData", JSON.stringify(data));
+      showDashboard();
+    } else {
+      errorMessage.textContent = data.error || "Login failed";
+      errorMessage.style.display = "block";
+    }
   } catch (error) {
-    errorMessage.textContent = error.response?.data?.error || "Login failed";
+    errorMessage.textContent = "Network error. Please try again.";
     errorMessage.style.display = "block";
   } finally {
     loadingIndicator.style.display = "none";
@@ -65,8 +71,10 @@ async function showDashboard() {
 // Fetch Users
 async function fetchUsers() {
   try {
-    const response = await axios.get(`${API_BASE_URL}/admin/users`);
-    const data = response.data;
+    const response = await fetch(`${API_BASE_URL}/admin/users`);
+    if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+    const data = await response.json();
     console.log("Fetched users data:", data);
 
     // Update total users count
@@ -90,7 +98,6 @@ async function fetchUsers() {
     userList.innerHTML = `<p>Error loading users: ${error.message}</p>`;
   }
 }
-
 // DOM Elements
 const selectUserSection = document.getElementById("selectUserSection");
 const eventsSection = document.getElementById("eventsSection");
@@ -111,8 +118,11 @@ function showSection(section) {
 // Fetch Events
 async function fetchEvents() {
   try {
-    const response = await axios.get(`${API_BASE_URL}/admin/events`);
-    eventsList.innerHTML = response.data
+    const response = await fetch(`${API_BASE_URL}/admin/events`);
+    if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+    const data = await response.json();
+    eventsList.innerHTML = data
       .map(
         (event) => `
 <div class="user-card">
@@ -159,7 +169,6 @@ function filterUsers() {
         : "none";
   });
 }
-
 // Show User Modal
 async function showUserModal(userId) {
   try {
@@ -167,11 +176,15 @@ async function showUserModal(userId) {
     userModalContent.innerHTML = "<p>Loading user details...</p>";
 
     // Fetch user details
-    const userResponse = await axios.post(`${API_BASE_URL}/admin/usersbyID`, {
-      user_id: userId,
+    const userResponse = await fetch(`${API_BASE_URL}/admin/usersbyID`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId }),
     });
 
-    const userData = userResponse.data;
+    if (!userResponse.ok) throw new Error(`API error: ${userResponse.status}`);
+
+    const userData = await userResponse.json();
 
     // Display user details immediately
     userModalContent.innerHTML = `
@@ -203,8 +216,10 @@ async function showUserModal(userId) {
      `;
 
     // Fetch borrowed books
-    const booksResponse = await axios.post(`${API_BASE_URL}/borrowed_books`, {
-      user_id: userId,
+    const booksResponse = await fetch(`${API_BASE_URL}/borrowed_books`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId }),
     });
 
     if (booksResponse.status === 404) {
@@ -214,13 +229,25 @@ async function showUserModal(userId) {
       return;
     }
 
+    if (!booksResponse.ok)
+      throw new Error(`API error: ${booksResponse.status}`);
+
+    const booksData = await booksResponse.json();
+
     // Get details for each borrowed book
     const bookDetails = await Promise.all(
-      booksResponse.data.borrowed_books.map(async ([bookId, borrowDate]) => {
-        const bookResponse = await axios.post(`${API_BASE_URL}/book_details`, {
-          book_id: bookId,
+      booksData.borrowed_books.map(async ([bookId, borrowDate]) => {
+        const bookResponse = await fetch(`${API_BASE_URL}/book_details`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ book_id: bookId }),
         });
-        return { ...bookResponse.data, borrowDate };
+
+        if (!bookResponse.ok)
+          throw new Error(`API error: ${bookResponse.status}`);
+
+        const bookData = await bookResponse.json();
+        return { ...bookData, borrowDate };
       })
     );
 
